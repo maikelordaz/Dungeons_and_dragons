@@ -33,6 +33,7 @@ const INITIAL_PRICE = "200000000000000000000"
 const BASE_FEE = "250000000000000000"
 const GAS_PRICE_LINK = 1e9
 const FUND_AMOUNT = "1000000000000000000000"
+const VERIFICATION_BLOCK_CONFIRMATIONS = "6"
 const developmentChains = ["hardhat", "localhost"]
 
 module.exports = {
@@ -42,5 +43,6 @@ module.exports = {
     BASE_FEE,
     GAS_PRICE_LINK,
     FUND_AMOUNT,
+    VERIFICATION_BLOCK_CONFIRMATIONS,
     developmentChains,
 }
