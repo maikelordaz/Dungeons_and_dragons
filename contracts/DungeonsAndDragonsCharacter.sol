@@ -7,11 +7,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
-error DungeonAndDragonCharacter__NeedMoreEth();
-error DungeonAndDragonCharacter__OutOfBounds();
-error DungeonAndDragonCharacter__TransferFailed();
+error DungeonsAndDragons__NeedMoreEth();
+error DungeonsAndDragons__OutOfBounds();
+error DungeonsAndDragons__TransferFailed();
 
-contract DungeonAndDragonCharacter is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
+contract DungeonsAndDragons is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     //////////////////////////
     // Chainlink variables //
     ////////////////////////
@@ -56,7 +56,7 @@ contract DungeonAndDragonCharacter is VRFConsumerBaseV2, ERC721URIStorage, Ownab
 
     uint256 private immutable i_mintFee;
     uint256 private s_tokenCounter;
-    string[] internal s_characterUri;
+    //string[] internal s_characterUri;
     uint256 internal constant MAX_CHANCE = 100;
 
     ///////////////
@@ -82,15 +82,15 @@ contract DungeonAndDragonCharacter is VRFConsumerBaseV2, ERC721URIStorage, Ownab
         bytes32 gasLane,
         uint64 subscriptionId,
         uint32 callbackGasLimit,
-        uint256 mintFee,
-        string[8] memory characterUri
+        uint256 mintFee /*,
+        string[8] memory characterUri*/
     ) VRFConsumerBaseV2(vrfCoordinatorV2) ERC721("DungeonsAndDradonCharacter", "D&D") {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane; // KeyHash
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
         i_mintFee = mintFee;
-        s_characterUri = characterUri;
+        //s_characterUri = characterUri;
     }
 
     /////////////////////
@@ -99,7 +99,7 @@ contract DungeonAndDragonCharacter is VRFConsumerBaseV2, ERC721URIStorage, Ownab
 
     function requestRandomCharacter(string memory name) public payable returns (uint256 requestId) {
         if (msg.value < i_mintFee) {
-            revert DungeonAndDragonCharacter__NeedMoreEth();
+            revert DungeonsAndDragons__NeedMoreEth();
         }
         requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
@@ -140,7 +140,7 @@ contract DungeonAndDragonCharacter is VRFConsumerBaseV2, ERC721URIStorage, Ownab
             )
         );
         _safeMint(characterOwner, newCharacterId);
-        _setTokenURI(newCharacterId, s_characterUri[uint256(characterRace)]);
+        //_setTokenURI(newCharacterId, s_characterUri[uint256(characterRace)]);
         emit characterMinted(characterOwner, newCharacterId, characterRace);
     }
 
@@ -157,16 +157,18 @@ contract DungeonAndDragonCharacter is VRFConsumerBaseV2, ERC721URIStorage, Ownab
             }
             cumulative += chanceArray[i];
         }
-        revert DungeonAndDragonCharacter__OutOfBounds();
+        revert DungeonsAndDragons__OutOfBounds();
     }
 
     function getChanceArray() public pure returns (uint256[8] memory) {
         return [5, 10, 15, 20, 40, 60, 80, MAX_CHANCE];
     }
 
+    /*
     function getCharacterUri(uint256 index) public view returns (string memory) {
         return s_characterUri[index];
     }
+    */
 
     function getLevel(uint256 tokenId) public view returns (uint256) {
         return sqrt(characters[tokenId].experience);
@@ -229,7 +231,7 @@ contract DungeonAndDragonCharacter is VRFConsumerBaseV2, ERC721URIStorage, Ownab
         uint256 amount = address(this).balance;
         (bool success, ) = payable(msg.sender).call{value: amount}("");
         if (!success) {
-            revert DungeonAndDragonCharacter__TransferFailed();
+            revert DungeonsAndDragons__TransferFailed();
         }
     }
 }
