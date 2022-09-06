@@ -1,11 +1,6 @@
 const { network, ethers } = require("hardhat")
 const { verify } = require("../utils/verify")
-const {
-    developmentChains,
-    VERIFICATION_BLOCK_CONFIRMATIONS,
-    FUND_AMOUNT,
-    networkConfig,
-} = require("../helper-hardhat-config")
+const { developmentChains, FUND_AMOUNT, networkConfig } = require("../helper-hardhat-config")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
@@ -29,7 +24,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const waitBlockConfirmations = developmentChains.includes(network.name)
         ? 1
-        : VERIFICATION_BLOCK_CONFIRMATIONS
+        : network.chainId.blockConfirmations
 
     const args = [
         vrfCoordinatorV2Address,
@@ -43,7 +38,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         from: deployer,
         args: args,
         log: true,
-        waitConfirmations: waitBlockConfirmations,
+        waitConfirmations: network.config.blockConfirmations || 1,
     })
     log("--------------- Dungeons And Dragons Contract deployed! ---------------")
 

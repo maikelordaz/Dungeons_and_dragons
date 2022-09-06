@@ -178,8 +178,8 @@ contract DungeonsAndDragons is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         return s_tokenCounter;
     }
 
-    function getCharacterOverview(uint256 tokenId) public view returns (string memory, uint256) {
-        return (characters[tokenId].name, getLevel(tokenId));
+    function getCharacterName(uint256 tokenId) public view returns (string memory) {
+        return (characters[tokenId].name);
     }
 
     function getCharacterStats(uint256 tokenId)

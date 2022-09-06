@@ -1,5 +1,6 @@
 const { assert, expect } = require("chai")
 const { network, ethers, deployments } = require("hardhat")
+const { resolve } = require("path")
 const { developmentChains, FUND_AMOUNT } = require("../helper-hardhat-config")
 
 !developmentChains.includes(network.name)
@@ -11,6 +12,8 @@ const { developmentChains, FUND_AMOUNT } = require("../helper-hardhat-config")
           beforeEach(async () => {
               accounts = await ethers.getSigners()
               deployer = accounts[0]
+              Alice = accounts[1]
+              Bob = accounts[2]
               await deployments.fixture(["mocks", "dungeon"])
               dungeons = await ethers.getContract("DungeonsAndDragons")
               vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
@@ -29,7 +32,7 @@ const { developmentChains, FUND_AMOUNT } = require("../helper-hardhat-config")
           })
 
           describe("requestRandomCharacter", () => {
-              it("fails if payment is't enough", async function () {
+              it("fails if payment isn't enough", async function () {
                   await expect(dungeons.requestRandomCharacter(name)).to.be.revertedWith(
                       "DungeonsAndDragons__NeedMoreEth"
                   )
@@ -40,6 +43,64 @@ const { developmentChains, FUND_AMOUNT } = require("../helper-hardhat-config")
                   await expect(
                       dungeons.requestRandomCharacter(name, { value: fee.toString() })
                   ).to.emit(dungeons, "characterRequested")
+              })
+          })
+
+          describe("fullfillRandomWords function", () => {
+              it("Should mint a character", async function () {
+                  await new Promise(async (resolve, reject) => {
+                      dungeons.once("characterMinted", async () => {
+                          try {
+                              const finalNumberOfCharacters = await dungeons.getNumberOfCharacters()
+                              const leveOfGoku = await dungeons.getLevel(0)
+                              const gokuOverview = await dungeons.getCharacterName(0)
+                              const gokuStats = await dungeons.getCharacterStats(0)
+                              assert.equal(gokuOverview, name)
+                              expect(leveOfGoku).to.exist
+                              expect(gokuStats[0]).to.exist
+                              expect(gokuStats[1]).to.exist
+                              expect(gokuStats[2]).to.exist
+                              expect(gokuStats[3]).to.exist
+                              expect(gokuStats[4]).to.exist
+                              expect(gokuStats[5]).to.exist
+                              expect(gokuStats[6]).to.exist
+                              assert(finalNumberOfCharacters > initialNumberOfCharacters)
+                              resolve()
+                          } catch (e) {
+                              reject(e)
+                          }
+                      })
+
+                      const initialNumberOfCharacters = await dungeons.getNumberOfCharacters()
+                      const fee = await dungeons.getMintFee()
+                      const requestTx = await dungeons.requestRandomCharacter(name, {
+                          value: fee.toString(),
+                      })
+
+                      const requestTxReceipt = await requestTx.wait(1)
+                      await vrfCoordinatorV2Mock.fulfillRandomWords(
+                          requestTxReceipt.events[1].args.requestId,
+                          dungeons.address
+                      )
+                  })
+              })
+          })
+
+          describe("withdraw function", () => {
+              it("Withdraw the money from minting characters", async function () {
+                  const deployerInitialBalance = await deployer.getBalance()
+                  const alice = dungeons.connect(Alice)
+                  const bob = dungeons.connect(Bob)
+                  const fee = await dungeons.getMintFee()
+                  await alice.requestRandomCharacter("Alice", { value: fee.toString() })
+                  await bob.requestRandomCharacter("Bob", { value: fee.toString() })
+                  await dungeons.withdraw()
+                  const deployerFinalBalance = await deployer.getBalance()
+                  /*
+                  expect(deployerFinalBalance.toNumber()).to.be.greaterThan(
+                      deployerInitialBalance.toNumber()
+                  )
+                  */
               })
           })
       })

@@ -57,6 +57,12 @@ module.exports = {
         deployer: {
             default: 0,
         },
+        Alice: {
+            default: 1,
+        },
+        Bob: {
+            default: 2,
+        },
     },
     mocha: {
         timeout: 300000,
