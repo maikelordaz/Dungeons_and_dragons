@@ -1,4 +1,9 @@
 // SPDX-License-Identifier: MIT
+/**
+ * @title DungeonsAndDragons
+ * @author Maikel Ordaz
+ * @notice A Dungeons And Dragons Game
+ */
 
 pragma solidity ^0.8.8;
 
@@ -97,6 +102,12 @@ contract DungeonsAndDragons is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // Main functions //
     ///////////////////
 
+    /**
+     * @notice A method to request new characters
+     * @notice is a payable function
+     * @dev it calls the VRF Cordinator for a random number
+     * @param name The name of the new character
+     */
     function requestRandomCharacter(string memory name) public payable returns (uint256 requestId) {
         if (msg.value < i_mintFee) {
             revert DungeonsAndDragons__NeedMoreEth();
@@ -112,6 +123,10 @@ contract DungeonsAndDragons is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         s_requestIdToSender[requestId] = msg.sender;
         emit characterRequested(requestId, msg.sender);
     }
+
+    /**
+     * @notice A function that receives the random number
+     */
 
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         address characterOwner = s_requestIdToSender[requestId];
@@ -163,12 +178,6 @@ contract DungeonsAndDragons is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     function getChanceArray() public pure returns (uint256[8] memory) {
         return [5, 10, 15, 20, 40, 60, 80, MAX_CHANCE];
     }
-
-    /*
-    function getCharacterUri(uint256 index) public view returns (string memory) {
-        return s_characterUri[index];
-    }
-    */
 
     function getLevel(uint256 tokenId) public view returns (uint256) {
         return sqrt(characters[tokenId].experience);
