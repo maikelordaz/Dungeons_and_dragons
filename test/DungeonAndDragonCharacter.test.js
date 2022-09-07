@@ -96,11 +96,6 @@ const { developmentChains, FUND_AMOUNT } = require("../helper-hardhat-config")
                   await bob.requestRandomCharacter("Bob", { value: fee.toString() })
                   await dungeons.withdraw()
                   const deployerFinalBalance = await deployer.getBalance()
-                  /*
-                  expect(deployerFinalBalance.toNumber()).to.be.greaterThan(
-                      deployerInitialBalance.toNumber()
-                  )
-                  */
               })
           })
       })
