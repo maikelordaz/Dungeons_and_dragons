@@ -1,4 +1,9 @@
 // SPDX-License-Identifier: MIT
+/**
+ * @title DungeonHelper
+ * @author Maikel Ordaz
+ * @notice Just some helping functions
+ */
 pragma solidity ^0.8.8;
 
 error DungeonHelper__OutOfBounds();
@@ -19,6 +24,7 @@ contract DungeonHelper {
         WIZARD
     }
     struct Character {
+        string name;
         uint256 strength;
         uint256 dexterity;
         uint256 constitution;
@@ -26,7 +32,9 @@ contract DungeonHelper {
         uint256 wisdom;
         uint256 charisma;
         uint256 experience;
-        string name;
+        uint256 winCount;
+        uint256 lossCount;
+        bool readyToFight;
     }
 
     Character[] public characters;

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 /**
- * @title AdminContract
+ * @title DungeonAdmin
+ * @author Maikel Ordaz
  * @notice A Contract with functions only to be called by the owner of the contract
  */
 
