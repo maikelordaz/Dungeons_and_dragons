@@ -8,6 +8,12 @@
 pragma solidity ^0.8.8;
 
 contract DungeonBattle {
+    ///////////////////////
+    // Battle functions //
+    /////////////////////
+
+    uint256 randomNumber;
+    uint256 attackVictoryProbability = 70;
     //////////////////////
     // Admin functions //
     ////////////////////
