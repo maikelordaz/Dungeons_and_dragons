@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
-error DungeonsAndDragons__OutOfBounds();
+error DungeonHelper__OutOfBounds();
 
-contract AuxiliarContract {
+contract DungeonHelper {
     //////////////////////////
     // Character variables //
     ////////////////////////
@@ -50,7 +50,7 @@ contract AuxiliarContract {
             }
             cumulative += chanceArray[i];
         }
-        revert DungeonsAndDragons__OutOfBounds();
+        revert DungeonHelper__OutOfBounds();
     }
 
     function getChanceArray() public pure returns (uint256[8] memory) {

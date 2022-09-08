@@ -6,9 +6,11 @@
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-error DungeonsAndDragons__TransferFailed();
+pragma solidity ^0.8.8;
 
-contract AdminContract is Ownable {
+error DungeonAdmin__TransferFailed();
+
+contract DungeonAdmin is Ownable {
     //////////////////////
     // Admin functions //
     ////////////////////
@@ -17,7 +19,7 @@ contract AdminContract is Ownable {
         uint256 amount = address(this).balance;
         (bool success, ) = payable(msg.sender).call{value: amount}("");
         if (!success) {
-            revert DungeonsAndDragons__TransferFailed();
+            revert DungeonAdmin__TransferFailed();
         }
     }
 }
